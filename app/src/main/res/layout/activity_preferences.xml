@@ -2,20 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/containerSet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/divider"
     android:orientation="vertical"
     tools:context=".activities.SettingActivity">
+
 
     <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbarS"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="4dp"
         android:background="@color/primary"
+        android:elevation="4dp"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" >
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="22dp"
+                android:text="Setting"
+                android:textColor="#ffffff"
+                android:textSize="25sp" />
+
+        </RelativeLayout>
+
 
     </androidx.appcompat.widget.Toolbar>
 </LinearLayout>
