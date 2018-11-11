@@ -1,6 +1,10 @@
 package com.example.truongnguyen.soundrecorder;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -8,6 +12,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.truongnguyen.soundrecorder.activities.MainActivity;
 import com.example.truongnguyen.soundrecorder.listeners.OnDatabaseChangedListener;
 
 import java.io.File;
@@ -18,6 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 public class RecordingService extends Service {
     private static final String LOG_TAG = "RecordingService";
@@ -31,7 +37,7 @@ public class RecordingService extends Service {
     private long mStartingTimeMillis = 0;
     private long mElapsedMillis = 0;
     private int mElapsedSeconds = 0;
-    private OnDatabaseChangedListener onTimerChangedListener = null;
+    private OnTimeChangedListener onTimeChangedListener = null;
     private static final SimpleDateFormat mTimerFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
 
     private Timer mTimer = null;
@@ -43,8 +49,8 @@ public class RecordingService extends Service {
         return null;
     }
 
-    public interface OnTimeChangedListner {
-        void onTimeChanged(int seconds);
+    public interface OnTimeChangedListener {
+        void onTimerChanged(int seconds);
     }
 
     @Override
@@ -124,5 +130,32 @@ public class RecordingService extends Service {
         }
 
 
+    }
+
+    private void startTimer() {
+
+        mTimer = new Timer();
+        mIncrementTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                mElapsedSeconds++;
+                if (onTimeChangedListener != null) {
+                    onTimeChangedListener.onTimerChanged(mElapsedSeconds);
+                    NotificationManager mgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    mgr.notify(1, createNotification());
+                }
+
+            }
+        };
+        mTimer.schedule(mIncrementTimerTask, 1000, 1000);
+
+    }
+
+    private Notification createNotification() {
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(R.drawable.ic_mic_white_36dp).setContentTitle(getString(R.string.notification_recording)).
+                setContentText(mTimerFormat.format(mElapsedSeconds * 1000)).setOngoing(true);
+        mBuilder.setContentIntent(PendingIntent.getActivities(getApplicationContext(), 0,
+                new Intent[]{new Intent(getApplicationContext(), MainActivity.class)}, 0));
+        return mBuilder.build();
     }
 }

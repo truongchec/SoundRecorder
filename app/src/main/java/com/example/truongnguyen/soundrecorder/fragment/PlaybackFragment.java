@@ -9,7 +9,9 @@ import android.widget.TextView;
 import com.example.truongnguyen.soundrecorder.RecordingItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class PlaybackFragment {
+import androidx.fragment.app.DialogFragment;
+
+public class PlaybackFragment  extends DialogFragment {
 
     private static final String LOG_TAG = "PlaybackFragment";
 
