@@ -26,7 +26,8 @@ public class SettingActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
         }
-        getFragmentManager().beginTransaction().replace(R.id.containerSet,new SettingFragment()).commit();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.containerSet,new SettingFragment()).commit();
 
     }
 }

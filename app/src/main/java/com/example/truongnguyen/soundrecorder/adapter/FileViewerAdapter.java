@@ -3,12 +3,15 @@ package com.example.truongnguyen.soundrecorder.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -123,14 +126,6 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
 
     }
 
-    private void deleteFileDialog(int adapterPosition) {
-    }
-
-    private void renameFileDialog(int adapterPosition) {
-    }
-
-    private void shareFileDialog(int adapterPosition) {
-    }
 
     //TODO
     public void removeOutOfApp(String filePath) {
@@ -140,7 +135,8 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
     @NonNull
     @Override
     public RecordingsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-      View itemView=LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview,parent,false);
+      View itemView=LayoutInflater.from(parent.getContext()).inflate(R.layout
+              .cardview,parent,false);
       mContext=parent.getContext();
 
 
@@ -206,17 +202,86 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
         File f = new File(mFilePath);
 
         if (f.exists() && !f.isDirectory()) {
-            //file name is not unique, cannot rename file.
+
             Toast.makeText(mContext,
                     String.format(mContext.getString(R.string.toast_file_exists), name),
                     Toast.LENGTH_SHORT).show();
 
         } else {
-            //file name is unique, rename file
+
             File oldFilePath = new File(getItem(position).getFilePath());
             oldFilePath.renameTo(f);
             mDatabase.renameItem(getItem(position), name, mFilePath);
             notifyItemChanged(position);
         }
+    }
+
+    private void deleteFileDialog(final int adapterPosition) {
+
+        AlertDialog.Builder confirmDelete=new AlertDialog.Builder(mContext);
+        confirmDelete.setTitle(mContext.getString(R.string.dialog_title_delete));
+        confirmDelete.setMessage(mContext.getString(R.string.dialog_text_delete));
+        confirmDelete.setCancelable(true);
+        confirmDelete.setPositiveButton(mContext
+                .getString(R.string.dialog_action_yes),
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+               try {
+                   remove(adapterPosition);
+               }catch (Exception e){
+                   Log.e(LOG_TAG,"exception",e);
+               }
+               dialog.cancel();
+            }
+        });
+        confirmDelete.setNegativeButton(mContext.getString(R.string.dialog_action_no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog=confirmDelete.create();
+        alertDialog.show();
+    }
+
+    private void renameFileDialog(final int adapterPosition) {
+        AlertDialog.Builder renameFile=new AlertDialog.Builder(mContext);
+        LayoutInflater inflater=LayoutInflater.from(mContext);
+        View view=inflater.inflate(R.layout.dialog_rename_file,null);
+        final EditText input=(EditText)view.findViewById(R.id.new_name);
+        renameFile.setTitle(mContext.getString(R.string.dialog_title_rename));
+        renameFile.setCancelable(true);
+        renameFile.setPositiveButton(mContext.getString(R.string.dialog_action_ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try{
+                    String value=input.getText().toString().trim()+".mp4";
+                    rename(adapterPosition,value);
+                }catch (Exception e){
+                    Log.e(LOG_TAG,"exception",e);
+                }
+                dialog.cancel();
+            }
+        });
+        renameFile.setNegativeButton(mContext.getString(R.string.dialog_action_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        renameFile.setView(view);
+        AlertDialog alertDialog=renameFile.create();
+        alertDialog.show();
+
+    }
+
+    private void shareFileDialog(int adapterPosition) {
+        Intent shareIntent=new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM,Uri.fromFile(new File(getItem(adapterPosition).getFilePath())));
+        shareIntent.setType("audio/mp4");
+        mContext.startActivity(Intent.createChooser(shareIntent,mContext.getText(R.string.send_to)));
+
     }
 }

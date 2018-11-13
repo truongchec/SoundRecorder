@@ -61,7 +61,7 @@ public class FileViewerFragment extends Fragment {
         mFileViewerAdapter = new FileViewerAdapter(getActivity(),llm);
         mRecyclerView.setAdapter(mFileViewerAdapter);
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return v;
     }
 
     FileObserver observer =
