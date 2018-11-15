@@ -16,9 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.truongnguyen.soundrecorder.DBHelper;
-import com.example.truongnguyen.soundrecorder.R;
+
 import com.example.truongnguyen.soundrecorder.RecordingItem;
 
+import com.example.truongnguyen.soundrecorder.activities.R;
 import com.example.truongnguyen.soundrecorder.fragment.PlaybackFragment;
 import com.example.truongnguyen.soundrecorder.listeners.OnDatabaseChangedListener;
 

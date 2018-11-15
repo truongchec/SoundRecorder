@@ -6,9 +6,11 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
-import com.example.truongnguyen.soundrecorder.BuildConfig;
+
 import com.example.truongnguyen.soundrecorder.MySharedPreferences;
-import com.example.truongnguyen.soundrecorder.R;
+
+import com.example.truongnguyen.soundrecorder.activities.BuildConfig;
+import com.example.truongnguyen.soundrecorder.activities.R;
 import com.example.truongnguyen.soundrecorder.activities.SettingActivity;
 
 import androidx.annotation.Nullable;
@@ -26,7 +28,7 @@ public class SettingFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                MySharedPreferences.setPrefHighQuality(getActivity(),(boolean)newValue);
 
-                return false;
+                return true;
             }
         });
         Preference aboutPref=findPreference(getString(R.string.pref_about_key));
@@ -37,7 +39,7 @@ public class SettingFragment extends PreferenceFragment {
                LicemsesFragment licemsesFragment=new LicemsesFragment();
                licemsesFragment.show(((SettingActivity)getActivity()).getSupportFragmentManager().beginTransaction(),"dialog_licenses");
 
-                return false;
+                return true;
             }
         });
     }

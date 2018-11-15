@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_marginTop="10dp"
     android:layout_width="match_parent"
+    android:background="@color/text"
     android:layout_height="match_parent">
     <ScrollView
         android:layout_marginTop="10dp"
@@ -41,7 +42,7 @@
                 android:textStyle="italic"
                 android:text="@string/license_content_fab"/>
 
-            <!-- PagerSlidingTabStrip -->
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

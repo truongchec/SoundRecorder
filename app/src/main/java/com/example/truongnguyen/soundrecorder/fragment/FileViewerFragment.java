@@ -8,7 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.truongnguyen.soundrecorder.R;
+
+import com.example.truongnguyen.soundrecorder.activities.R;
 import com.example.truongnguyen.soundrecorder.adapter.FileViewerAdapter;
 
 import androidx.annotation.NonNull;

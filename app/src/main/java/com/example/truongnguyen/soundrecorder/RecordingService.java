@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.truongnguyen.soundrecorder.activities.MainActivity;
+import com.example.truongnguyen.soundrecorder.activities.R;
 import com.example.truongnguyen.soundrecorder.listeners.OnDatabaseChangedListener;
 
 import java.io.File;

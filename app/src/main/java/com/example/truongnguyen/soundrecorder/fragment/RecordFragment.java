@@ -13,8 +13,9 @@ import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.truongnguyen.soundrecorder.R;
+
 import com.example.truongnguyen.soundrecorder.RecordingService;
+import com.example.truongnguyen.soundrecorder.activities.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;

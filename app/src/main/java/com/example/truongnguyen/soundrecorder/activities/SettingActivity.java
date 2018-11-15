@@ -6,7 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 
-import com.example.truongnguyen.soundrecorder.R;
+
 import com.example.truongnguyen.soundrecorder.fragment.SettingFragment;
 
 public class SettingActivity extends AppCompatActivity {

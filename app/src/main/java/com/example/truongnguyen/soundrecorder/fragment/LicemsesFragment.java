@@ -6,7 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.example.truongnguyen.soundrecorder.R;
+
+import com.example.truongnguyen.soundrecorder.activities.R;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +21,8 @@ public class LicemsesFragment extends DialogFragment {
         LayoutInflater dialogInflater=getActivity().getLayoutInflater();
         View openSourceLicenseView=dialogInflater.inflate(R.layout.fragment_licenses,null);
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
-        builder.setView(openSourceLicenseView).setTitle((getString(R.string.dialog_title_licenses))).setNeutralButton(android.R.string.ok,null);
+        builder.setView(openSourceLicenseView).setTitle((getString(R.string.dialog_title_licenses)))
+                .setNeutralButton(android.R.string.ok,null);
 
         return builder.create();
     }
