@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.example.truongnguyen.soundrecorder.activities.MainActivity;
 import com.example.truongnguyen.soundrecorder.activities.R;
-import com.example.truongnguyen.soundrecorder.listeners.OnDatabaseChangedListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,7 +75,6 @@ public class RecordingService extends Service {
 
     public void startRecording() {
         setFileNameAndPath();
-
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -93,8 +91,8 @@ public class RecordingService extends Service {
             mStartingTimeMillis = System.currentTimeMillis();
 
 
-            //startTimer();
-            //startForeground(1, createNotification());
+            startTimer();
+            startForeground(1, createNotification());
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
@@ -105,10 +103,11 @@ public class RecordingService extends Service {
         File f;
         do {
             count++;
-            mFileName = getString(R.string.default_file_name) + "_" +
-                    (mDatabase.getCount() + count) + ".mp4";
+            mFileName = getString(R.string.default_file_name)
+                    + "_" + (mDatabase.getCount() + count) + ".mp4";
             mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-            mFilePath += "/SoundRecorder" + mFileName;
+            mFilePath += "/SoundRecorder/" + mFileName;
+
             f = new File(mFilePath);
         } while (f.exists() && !f.isDirectory());
     }
