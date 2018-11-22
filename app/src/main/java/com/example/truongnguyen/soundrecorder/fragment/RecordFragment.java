@@ -1,6 +1,8 @@
 package com.example.truongnguyen.soundrecorder.fragment;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
@@ -22,6 +24,7 @@ import java.io.File;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 public class RecordFragment extends Fragment {
@@ -72,13 +75,30 @@ public class RecordFragment extends Fragment {
         mRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onRecord(mStartRecording);
-                mStartRecording = !mStartRecording;
+
+                requestPermissionOnRecord();
+
             }
         });
 
 
         return recordView;
+    }
+
+    private void requestPermissionOnRecord() {
+        if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+          //chua duoc cap quyen
+
+            ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, 100);
+
+
+        } else {
+            //da dc cap quyen thi...
+
+            onRecord(mStartRecording);
+            mStartRecording = !mStartRecording;
+
+        }
     }
 
     private void onRecord(boolean start) {
@@ -114,11 +134,11 @@ public class RecordFragment extends Fragment {
             mRecordingPrompt.setText(getString(R.string.record_in_progress) + ".");
             mRecordPromptCount++;
 
-        }else{
+        } else {
             mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
             mChronometer.stop();
             mChronometer.setBase(SystemClock.elapsedRealtime());
-            timeWhenPaused=0;
+            timeWhenPaused = 0;
             mRecordingPrompt.setText(getString(R.string.record_prompt));
             getActivity().stopService(intent);
             getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

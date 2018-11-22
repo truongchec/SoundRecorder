@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/divider"
     android:orientation="vertical"
-    tools:context=".activities.SettingActivity">
+    tools:context=".SettingActivity">
 
 
     <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
@@ -28,7 +28,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="22dp"
+                android:layout_marginLeft="15dp"
                 android:text="Setting"
                 android:textColor="#ffffff"
                 android:textSize="25sp" />
