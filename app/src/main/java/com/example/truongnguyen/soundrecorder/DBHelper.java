@@ -9,7 +9,7 @@ import android.provider.BaseColumns;
 
 import com.example.truongnguyen.soundrecorder.listeners.OnDatabaseChangedListener;
 
-import java.io.StringReader;
+
 import java.util.Comparator;
 
 public class DBHelper extends SQLiteOpenHelper {

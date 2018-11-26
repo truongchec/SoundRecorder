@@ -70,8 +70,12 @@ public class RecordFragment extends Fragment {
 
         View recordView = inflater.inflate(R.layout.fragment_record, container, false);
         mChronometer = (Chronometer) recordView.findViewById(R.id.chronometer);
+        //update recording prompt text
         mRecordingPrompt = (TextView) recordView.findViewById(R.id.recording_status_text);
         mRecordButton = (FloatingActionButton) recordView.findViewById(R.id.btnRecord);
+        //   mRecordButton.setColorNormal(getResources().getColor(R.color.primary));
+        //   mRecordButton.setColorPressed(getResources().getColor(R.color.primary_dark));
+
         mRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
