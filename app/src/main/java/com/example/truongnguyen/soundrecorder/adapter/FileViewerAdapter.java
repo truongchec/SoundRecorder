@@ -34,7 +34,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.RecordingsViewHolder> implements OnDatabaseChangedListener {
+public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.RecordingsViewHolder>
+        implements OnDatabaseChangedListener{
+
     private static final String LOG_TAG = "FileViewerAdapter";
 
     private DBHelper mDatabase;
@@ -52,13 +54,14 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final RecordingsViewHolder holder, int position) {
+    public void onBindViewHolder(final RecordingsViewHolder holder, int position) {
+
         item = getItem(position);
         long itemDuration = item.getLength();
+
         long minutes = TimeUnit.MILLISECONDS.toMinutes(itemDuration);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(itemDuration)
                 - TimeUnit.MINUTES.toSeconds(minutes);
-
 
         holder.vName.setText(item.getName());
         holder.vLength.setText(String.format("%02d:%02d", minutes, seconds));
@@ -70,25 +73,30 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
                 )
         );
 
+        // define an on click listener to open PlaybackFragment
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 try {
                     PlaybackFragment playbackFragment =
-                            new PlaybackFragment().newInstance(getItem(holder.getAdapterPosition()));
+                            new PlaybackFragment().newInstance(getItem(holder.getPosition()));
+
                     FragmentTransaction transaction = ((FragmentActivity) mContext)
                             .getSupportFragmentManager()
                             .beginTransaction();
 
                     playbackFragment.show(transaction, "dialog_playback");
+
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "exception", e);
                 }
             }
         });
+
         holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+
                 ArrayList<String> entrys = new ArrayList<String>();
                 entrys.add(mContext.getString(R.string.dialog_file_share));
                 entrys.add(mContext.getString(R.string.dialog_file_rename));
@@ -96,17 +104,18 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
 
                 final CharSequence[] items = entrys.toArray(new CharSequence[entrys.size()]);
 
-                AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
+
+                // File delete confirm
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder.setTitle(mContext.getString(R.string.dialog_title_options));
                 builder.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(which==0){
-                            shareFileDialog(holder.getAdapterPosition());
-                        }if (which == 1) {
-                            renameFileDialog(holder.getAdapterPosition());
-                        } else if (which == 2) {
-                            deleteFileDialog(holder.getAdapterPosition());
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (item == 0) {
+                            shareFileDialog(holder.getPosition());
+                        } if (item == 1) {
+                            renameFileDialog(holder.getPosition());
+                        } else if (item == 2) {
+                            deleteFileDialog(holder.getPosition());
                         }
                     }
                 });
@@ -117,53 +126,25 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
                                 dialog.cancel();
                             }
                         });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
+
+                AlertDialog alert = builder.create();
+                alert.show();
 
                 return false;
             }
         });
-
-
     }
 
-
-    //TODO
-    public void removeOutOfApp(String filePath) {
-        //user deletes a saved recording out of the application through another application
-    }
-
-    @NonNull
     @Override
-    public RecordingsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-      View itemView=LayoutInflater.from(parent.getContext()).inflate(R.layout
-              .cardview,parent,false);
-      mContext=parent.getContext();
+    public RecordingsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
+        View itemView = LayoutInflater.
+                from(parent.getContext()).
+                inflate(R.layout.cardview, parent, false);
+
+        mContext = parent.getContext();
 
         return new RecordingsViewHolder(itemView);
-    }
-
-
-    @Override
-    public int getItemCount() {
-        return 0;
-    }
-
-    public RecordingItem getItem(int position) {
-        return mDatabase.getItemAt(position);
-    }
-
-    @Override
-    public void onNewDatabaseEntryAdded() {
-        notifyItemInserted(getItemCount() - 1);
-        llm.scrollToPosition(getItemCount() - 1);
-
-    }
-
-    @Override
-    public void onDatabaseEntryRenamed() {
-
     }
 
     public static class RecordingsViewHolder extends RecyclerView.ViewHolder {
@@ -174,14 +155,39 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
 
         public RecordingsViewHolder(View v) {
             super(v);
-            vName=(TextView) v.findViewById(R.id.file_name_text);
-            vLength=(TextView) v.findViewById(R.id.file_length_text);
-            vDateAdded=(TextView) v.findViewById(R.id.file_date_added_text);
-            cardView=v.findViewById(R.id.card_view);
-
+            vName = (TextView) v.findViewById(R.id.file_name_text);
+            vLength = (TextView) v.findViewById(R.id.file_length_text);
+            vDateAdded = (TextView) v.findViewById(R.id.file_date_added_text);
+            cardView = v.findViewById(R.id.card_view);
         }
     }
-    public void remove(int position){
+
+    @Override
+    public int getItemCount() {
+        return mDatabase.getCount();
+    }
+
+    public RecordingItem getItem(int position) {
+        return mDatabase.getItemAt(position);
+    }
+
+    @Override
+    public void onNewDatabaseEntryAdded() {
+        //item added to top of the list
+        notifyItemInserted(getItemCount() - 1);
+        llm.scrollToPosition(getItemCount() - 1);
+    }
+
+    @Override
+    //TODO
+    public void onDatabaseEntryRenamed() {
+
+    }
+
+    public void remove(int position) {
+        //remove item from database, recyclerview and storage
+
+        //delete file from storage
         File file = new File(getItem(position).getFilePath());
         file.delete();
 
@@ -197,19 +203,27 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
         mDatabase.removeItemWithId(getItem(position).getId());
         notifyItemRemoved(position);
     }
-    public void rename(int position, String name){
+
+    //TODO
+    public void removeOutOfApp(String filePath) {
+        //user deletes a saved recording out of the application through another application
+    }
+
+    public void rename(int position, String name) {
+        //rename a file
+
         String mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFilePath += "/SoundRecorder/" + name;
         File f = new File(mFilePath);
 
         if (f.exists() && !f.isDirectory()) {
-
+            //file name is not unique, cannot rename file.
             Toast.makeText(mContext,
                     String.format(mContext.getString(R.string.toast_file_exists), name),
                     Toast.LENGTH_SHORT).show();
 
         } else {
-
+            //file name is unique, rename file
             File oldFilePath = new File(getItem(position).getFilePath());
             oldFilePath.renameTo(f);
             mDatabase.renameItem(getItem(position), name, mFilePath);
@@ -217,72 +231,89 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
         }
     }
 
-    private void deleteFileDialog(final int adapterPosition) {
-
-        AlertDialog.Builder confirmDelete=new AlertDialog.Builder(mContext);
-        confirmDelete.setTitle(mContext.getString(R.string.dialog_title_delete));
-        confirmDelete.setMessage(mContext.getString(R.string.dialog_text_delete));
-        confirmDelete.setCancelable(true);
-        confirmDelete.setPositiveButton(mContext
-                .getString(R.string.dialog_action_yes),
-                new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-               try {
-                   remove(adapterPosition);
-               }catch (Exception e){
-                   Log.e(LOG_TAG,"exception",e);
-               }
-               dialog.cancel();
-            }
-        });
-        confirmDelete.setNegativeButton(mContext.getString(R.string.dialog_action_no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog alertDialog=confirmDelete.create();
-        alertDialog.show();
-    }
-
-    private void renameFileDialog(final int adapterPosition) {
-        AlertDialog.Builder renameFile=new AlertDialog.Builder(mContext);
-        LayoutInflater inflater=LayoutInflater.from(mContext);
-        View view=inflater.inflate(R.layout.dialog_rename_file,null);
-        final EditText input=(EditText)view.findViewById(R.id.new_name);
-        renameFile.setTitle(mContext.getString(R.string.dialog_title_rename));
-        renameFile.setCancelable(true);
-        renameFile.setPositiveButton(mContext.getString(R.string.dialog_action_ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                try{
-                    String value=input.getText().toString().trim()+".mp4";
-                    rename(adapterPosition,value);
-                }catch (Exception e){
-                    Log.e(LOG_TAG,"exception",e);
-                }
-                dialog.cancel();
-            }
-        });
-        renameFile.setNegativeButton(mContext.getString(R.string.dialog_action_cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        renameFile.setView(view);
-        AlertDialog alertDialog=renameFile.create();
-        alertDialog.show();
-
-    }
-
-    private void shareFileDialog(int adapterPosition) {
-        Intent shareIntent=new Intent();
+    public void shareFileDialog(int position) {
+        Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_STREAM,Uri.fromFile(new File(getItem(adapterPosition).getFilePath())));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new
+                File(getItem(position).getFilePath())));
         shareIntent.setType("audio/mp4");
-        mContext.startActivity(Intent.createChooser(shareIntent,mContext.getText(R.string.send_to)));
+        mContext.startActivity(Intent.createChooser(shareIntent,
+                mContext.getText(R.string.send_to)));
+    }
 
+    public void renameFileDialog (final int position) {
+        // File rename dialog
+        AlertDialog.Builder renameFileBuilder = new AlertDialog.Builder(mContext);
+
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View view = inflater.inflate(R.layout.dialog_rename_file, null);
+
+        final EditText input = (EditText) view.findViewById(R.id.new_name);
+
+        renameFileBuilder.setTitle(mContext.getString(R.string
+                .dialog_title_rename));
+        renameFileBuilder.setCancelable(true);
+        renameFileBuilder.setPositiveButton(mContext.getString(R.string
+                        .dialog_action_ok),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        try {
+                            String value = input.getText().
+                                    toString().trim() + ".mp4";
+                            rename(position, value);
+
+                        } catch (Exception e) {
+                            Log.e(LOG_TAG, "exception", e);
+                        }
+
+                        dialog.cancel();
+                    }
+                });
+        renameFileBuilder.setNegativeButton(mContext.getString(R.string
+                        .dialog_action_cancel),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        renameFileBuilder.setView(view);
+        AlertDialog alert = renameFileBuilder.create();
+        alert.show();
+    }
+
+    public void deleteFileDialog (final int position) {
+        // File delete confirm
+        AlertDialog.Builder confirmDelete = new AlertDialog.Builder(mContext);
+        confirmDelete.setTitle(mContext.getString(R.string
+                .dialog_title_delete));
+        confirmDelete.setMessage(mContext.getString(R.string
+                .dialog_text_delete));
+        confirmDelete.setCancelable(true);
+        confirmDelete.setPositiveButton(mContext.getString(R.string
+                        .dialog_action_yes),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        try {
+                            //remove item from database, recyclerview, and storage
+                            remove(position);
+
+                        } catch (Exception e) {
+                            Log.e(LOG_TAG, "exception", e);
+                        }
+
+                        dialog.cancel();
+                    }
+                });
+        confirmDelete.setNegativeButton(mContext.getString(R.string
+                        .dialog_action_no),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert = confirmDelete.create();
+        alert.show();
     }
 }

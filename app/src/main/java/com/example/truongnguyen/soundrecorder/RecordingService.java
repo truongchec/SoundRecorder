@@ -1,6 +1,8 @@
 package com.example.truongnguyen.soundrecorder;
 
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,6 +10,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.IBinder;
@@ -26,6 +29,7 @@ import java.util.TimerTask;
 
 import androidx.annotation.Nullable;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 public class RecordingService extends Service {
 
@@ -106,6 +110,7 @@ public class RecordingService extends Service {
     }
 
     public void setFileNameAndPath(){
+
         int count = 0;
         File f;
 

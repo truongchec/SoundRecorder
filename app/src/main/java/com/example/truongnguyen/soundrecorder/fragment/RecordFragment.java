@@ -90,11 +90,13 @@ public class RecordFragment extends Fragment {
     }
 
     private void requestPermissionOnRecord() {
+
         if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-          //chua duoc cap quyen
+            //chua duoc cap quyen
 
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, 100);
-
+           // ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 99);
+//
 
         } else {
             //da dc cap quyen thi...
@@ -103,49 +105,66 @@ public class RecordFragment extends Fragment {
             mStartRecording = !mStartRecording;
 
         }
+
     }
 
     private void onRecord(boolean start) {
-        Intent intent = new Intent(getActivity(), RecordingService.class);
-        if (start) {
-            mRecordButton.setImageResource(R.drawable.ic_media_stop);
-            Toast.makeText(getActivity(), R.string.toast_recording_start, Toast.LENGTH_SHORT).show();
 
-            File folder = new File(Environment.getExternalStorageDirectory() + "/SoundRecorder");
-            if (!folder.exists()) {
-                folder.mkdir();
-            }
 
-            mChronometer.setBase(SystemClock.elapsedRealtime());
-            mChronometer.start();
-            mChronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-                @Override
-                public void onChronometerTick(Chronometer chronometer) {
-                    if (mRecordPromptCount == 0) {
-                        mRecordingPrompt.setText(getString(R.string.record_in_progress) + ".");
-                    } else if (mRecordPromptCount == 1) {
-                        mRecordingPrompt.setText(getString(R.string.record_in_progress) + "..");
+            Intent intent = new Intent(getActivity(), RecordingService.class);
+            if (start) {
+                if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    //chua duoc cap quyen
 
-                    } else if (mRecordPromptCount == 2) {
-                        mRecordingPrompt.setText(getString(R.string.record_in_progress) + "...");
-                        mRecordPromptCount = -1;
+                    ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 99);
+                    // ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 99);
+//
+
+                } else {
+                    mRecordButton.setImageResource(R.drawable.ic_media_stop);
+                    Toast.makeText(getActivity(), R.string.toast_recording_start, Toast.LENGTH_SHORT).show();
+
+                    File folder = new File(Environment.getExternalStorageDirectory() + "/SoundRecorder");
+                    if (!folder.exists()) {
+                        folder.mkdir();
                     }
+
+
+                    mChronometer.setBase(SystemClock.elapsedRealtime());
+                    mChronometer.start();
+                    mChronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+                        @Override
+                        public void onChronometerTick(Chronometer chronometer) {
+                            if (mRecordPromptCount == 0) {
+                                mRecordingPrompt.setText(getString(R.string.record_in_progress) + ".");
+                            } else if (mRecordPromptCount == 1) {
+                                mRecordingPrompt.setText(getString(R.string.record_in_progress) + "..");
+
+                            } else if (mRecordPromptCount == 2) {
+                                mRecordingPrompt.setText(getString(R.string.record_in_progress) + "...");
+                                mRecordPromptCount = -1;
+                            }
+                            mRecordPromptCount++;
+                        }
+                    });
+                    getActivity().startService(intent);
+                    getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    mRecordingPrompt.setText(getString(R.string.record_in_progress) + ".");
                     mRecordPromptCount++;
                 }
-            });
-            getActivity().startService(intent);
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            mRecordingPrompt.setText(getString(R.string.record_in_progress) + ".");
-            mRecordPromptCount++;
 
-        } else {
-            mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
-            mChronometer.stop();
-            mChronometer.setBase(SystemClock.elapsedRealtime());
-            timeWhenPaused = 0;
-            mRecordingPrompt.setText(getString(R.string.record_prompt));
-            getActivity().stopService(intent);
-            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+            } else {
+                mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
+                mChronometer.stop();
+                mChronometer.setBase(SystemClock.elapsedRealtime());
+                timeWhenPaused = 0;
+                mRecordingPrompt.setText(getString(R.string.record_prompt));
+                getActivity().stopService(intent);
+                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+
         }
-    }
+
+
 }

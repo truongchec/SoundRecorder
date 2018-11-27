@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:id="@+id/fragment_file_viewer"
+    tools:context="com.example.truongnguyen.soundrecorder.fragment.FileViewerFragment"
     android:layout_height="fill_parent">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

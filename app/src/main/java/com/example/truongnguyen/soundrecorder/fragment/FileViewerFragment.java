@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 import com.example.truongnguyen.soundrecorder.activities.R;
 import com.example.truongnguyen.soundrecorder.adapter.FileViewerAdapter;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,30 +34,30 @@ public class FileViewerFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         position = getArguments().getInt(ARG_POSITION);
         observer.startWatching();
     }
 
     @SuppressLint("WrongConstant")
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_file_viewer, container, false);
+
         RecyclerView mRecyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-
         llm.setOrientation(LinearLayoutManager.VERTICAL);
+
+        //newest to oldest order (database stores from oldest to newest)
         llm.setReverseLayout(true);
         llm.setStackFromEnd(true);
 
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mFileViewerAdapter = new FileViewerAdapter(getActivity(),llm);
+        mFileViewerAdapter = new FileViewerAdapter(getActivity(), llm);
         mRecyclerView.setAdapter(mFileViewerAdapter);
 
         return v;
@@ -72,7 +70,7 @@ public class FileViewerFragment extends Fragment {
                 @Override
                 public void onEvent(int event, String file) {
                     if (event == FileObserver.DELETE) {
-                        // user deletes a recording file out of the app
+                        // user deletes a recording file out of the app]
 
                         String filePath = android.os.Environment.getExternalStorageDirectory().toString()
                                 + "/SoundRecorder" + file + "]";
