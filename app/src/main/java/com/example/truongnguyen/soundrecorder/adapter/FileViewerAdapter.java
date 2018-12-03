@@ -73,7 +73,7 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
                 )
         );
 
-        // define an on click listener to open PlaybackFragment
+
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,11 +111,11 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         if (item == 0) {
-                            shareFileDialog(holder.getPosition());
+                            shareFileDialog(holder.getAdapterPosition());
                         } if (item == 1) {
-                            renameFileDialog(holder.getPosition());
+                            renameFileDialog(holder.getAdapterPosition());
                         } else if (item == 2) {
-                            deleteFileDialog(holder.getPosition());
+                            deleteFileDialog(holder.getAdapterPosition());
                         }
                     }
                 });
@@ -173,7 +173,7 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
 
     @Override
     public void onNewDatabaseEntryAdded() {
-        //item added to top of the list
+
         notifyItemInserted(getItemCount() - 1);
         llm.scrollToPosition(getItemCount() - 1);
     }
@@ -185,9 +185,7 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
     }
 
     public void remove(int position) {
-        //remove item from database, recyclerview and storage
 
-        //delete file from storage
         File file = new File(getItem(position).getFilePath());
         file.delete();
 
@@ -206,18 +204,18 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
 
     //TODO
     public void removeOutOfApp(String filePath) {
-        //user deletes a saved recording out of the application through another application
+
     }
 
     public void rename(int position, String name) {
-        //rename a file
+
 
         String mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFilePath += "/SoundRecorder/" + name;
         File f = new File(mFilePath);
 
         if (f.exists() && !f.isDirectory()) {
-            //file name is not unique, cannot rename file.
+
             Toast.makeText(mContext,
                     String.format(mContext.getString(R.string.toast_file_exists), name),
                     Toast.LENGTH_SHORT).show();
@@ -237,12 +235,11 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
         shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new
                 File(getItem(position).getFilePath())));
         shareIntent.setType("audio/mp4");
-        mContext.startActivity(Intent.createChooser(shareIntent,
-                mContext.getText(R.string.send_to)));
+        mContext.startActivity(Intent.createChooser(shareIntent,mContext.getText(R.string.send_to)));
     }
 
     public void renameFileDialog (final int position) {
-        // File rename dialog
+
         AlertDialog.Builder renameFileBuilder = new AlertDialog.Builder(mContext);
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -283,7 +280,7 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
     }
 
     public void deleteFileDialog (final int position) {
-        // File delete confirm
+
         AlertDialog.Builder confirmDelete = new AlertDialog.Builder(mContext);
         confirmDelete.setTitle(mContext.getString(R.string
                 .dialog_title_delete));
@@ -295,7 +292,7 @@ public class FileViewerAdapter extends RecyclerView.Adapter<FileViewerAdapter.Re
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         try {
-                            //remove item from database, recyclerview, and storage
+
                             remove(position);
 
                         } catch (Exception e) {
